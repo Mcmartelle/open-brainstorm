@@ -1,4 +1,6 @@
-# YOUR_PROJECTS_TITLE
+# Open-Brainstorm
+
+Realtime collaborative brainstorm web app to display on a big screen while team members can add ideas on their phones.
 
 This project is built using AofL JS. For documentation visit the <a href="https://ageoflearning.github.io/aofl/" target="_blank" rel="noopener noreferrer">AofL JS documentation website</a>.
 

@@ -6,9 +6,21 @@ const sdo = {
   mutations: {
     init(payload = {}) {
       return Object.assign({
-        todos: [],
-        filter: ''
+        ideas: []
       }, payload);
+    },
+    insert(subState, description) {
+      return Object.assign({}, subState, {
+        ideas: [
+          ...subState.ideas,
+          {
+            index: subState.ideas.length,
+            description,
+            upVoted: false,
+            downVoted: false
+          }
+        ]
+      });
     }
   }
 };
