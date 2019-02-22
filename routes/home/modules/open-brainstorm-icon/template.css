@@ -1,0 +1,9 @@
+:host {
+  display: inline-block;
+}
+
+svg {
+  width: 5em;
+  height: 5em;
+  fill: lightslategray;
+}

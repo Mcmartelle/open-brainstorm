@@ -1,6 +1,6 @@
 /**
  * @route /
- * @title AofL::Home
+ * @title Open-Brainstorm
  * @prerender false
  */
 import {template} from './template';
@@ -8,7 +8,7 @@ import AoflElement from '@aofl/web-components/aofl-element';
 import styles from './template.css';
 import {storeInstance} from '@aofl/store';
 import {mapStatePropertiesMixin} from '@aofl/map-state-properties-mixin';
-import './modules/todos-sdo';
+import './modules/ideas-sdo';
 import {sdoNamespaces} from '../../modules/constants-enumerate';
 /**
  *
@@ -29,7 +29,7 @@ class HomePage extends mapStatePropertiesMixin(AoflElement) {
    */
   static get properties() {
     return {
-      ideas: {type: Array, attribute: false}
+      sortedIdeas: {type: Array, attribute: false}
     };
   }
 
@@ -39,7 +39,10 @@ class HomePage extends mapStatePropertiesMixin(AoflElement) {
    */
   mapStateProperties() {
     const state = this.storeInstance.getState();
-    this.ideas = state[sdoNamespaces.IDEAS].$ideas;
+    console.log('state: ', state);
+
+    this.sortedIdeas = state[sdoNamespaces.IDEAS].$sortedIdeas;
+    console.log('this.sortedIdeas: ', this.sortedIdeas);
   }
 
   /**
@@ -48,6 +51,38 @@ class HomePage extends mapStatePropertiesMixin(AoflElement) {
    */
   static get is() {
     return 'home-page';
+  }
+
+  /**
+   *
+   *
+   * @param {*} e
+   * @param {*} index
+   */
+  upVote(e, index) {
+    e.preventDefault();
+
+    this.storeInstance.commit({
+      namespace: sdoNamespaces.IDEAS,
+      mutationId: 'upVote',
+      payload: index
+    });
+  }
+
+  /**
+   *
+   *
+   * @param {*} e
+   * @param {*} index
+   */
+  downVote(e, index) {
+    e.preventDefault();
+
+    this.storeInstance.commit({
+      namespace: sdoNamespaces.IDEAS,
+      mutationId: 'downVote',
+      payload: index
+    });
   }
 
   /**
