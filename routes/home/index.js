@@ -10,6 +10,7 @@ import {storeInstance} from '@aofl/store';
 import {mapStatePropertiesMixin} from '@aofl/map-state-properties-mixin';
 import './modules/ideas-sdo';
 import {sdoNamespaces} from '../../modules/constants-enumerate';
+
 /**
  *
  * @extends {AoflElement}

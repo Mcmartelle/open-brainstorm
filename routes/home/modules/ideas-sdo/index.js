@@ -1,6 +1,9 @@
 import {sdoNamespaces} from '../../../../modules/constants-enumerate';
 import {storeInstance} from '@aofl/store';
 import {deepAssign} from '@aofl/object-utils';
+import SocketSingleton from '../socket-singleton';
+
+const socket = new SocketSingleton().socket;
 
 const sdo = {
   namespace: sdoNamespaces.IDEAS,
@@ -8,22 +11,39 @@ const sdo = {
     init(payload = {}) {
       return Object.assign(
       {
-        ideas: []
+        ideas: [],
+        $userId: Math.round(Math.random()*10**10)
       },
       payload
       );
     },
     insert(subState, description) {
+      const newIdea =
+      {
+        author: subState.$userId,
+        ideaId: subState.$userId + new Date().getTime(),
+        index: subState.ideas.length,
+        description,
+        voteCount: 0,
+        upVoted: false,
+        downVoted: false
+      };
+      socket.emit('new idea', newIdea);
       return Object.assign({}, subState, {
         ideas: [
           ...subState.ideas,
-          {
-            index: subState.ideas.length,
-            description,
-            voteCount: 0,
-            upVoted: false,
-            downVoted: false
-          }
+          newIdea
+        ]
+      });
+    },
+    insertFromSocket(subState, newIdea) {
+      if (newIdea.author === subState.$userId) {
+        return subState;
+      }
+      return Object.assign({}, subState, {
+        ideas: [
+          ...subState.ideas,
+          newIdea
         ]
       });
     },
