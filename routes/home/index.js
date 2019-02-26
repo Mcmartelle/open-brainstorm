@@ -40,10 +40,7 @@ class HomePage extends mapStatePropertiesMixin(AoflElement) {
    */
   mapStateProperties() {
     const state = this.storeInstance.getState();
-    console.log('state: ', state);
-
     this.sortedIdeas = state[sdoNamespaces.IDEAS].$sortedIdeas;
-    console.log('this.sortedIdeas: ', this.sortedIdeas);
   }
 
   /**
