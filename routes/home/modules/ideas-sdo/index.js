@@ -12,10 +12,42 @@ const sdo = {
       return Object.assign(
       {
         ideas: [],
-        $userId: Math.round(Math.random()*10**10)
+        $userId: Math.round(Math.random()*10**10),
+        $createRoomAttempted: false,
+        $joinRoomAttempted: false
       },
       payload
       );
+    },
+    createRoom(subState) {
+      socket.emit('createRoom');
+      return Object.assign({}, subState, {
+        $createRoomAttempted: true
+      });
+    },
+    roomCreated(subState, roomName) {
+      return Object.assign({}, subState, {
+        $roomCreated: true,
+        $roomName: roomName
+      });
+    },
+    joinRoom(subState, roomName) {
+      const re = /^[A-Z]{5}/;
+      if (re.test(roomName)) {
+        socket.emit('join room', roomName);
+        return Object.assign({}, subState, {
+          $joinRoomAttempted: true
+        });
+      } else {
+        console.log('Incorrect brainstorm ID format.');
+        return subState;
+      }
+    },
+    roomJoined(subState, roomName) {
+      return Object.assign({}, subState, {
+        $roomJoined: true,
+        $roomName: roomName
+      });
     },
     insert(subState, description) {
       const newIdea =
@@ -28,7 +60,7 @@ const sdo = {
         upVoted: false,
         downVoted: false
       };
-      socket.emit('new idea', newIdea);
+      socket.emit('idea update', newIdea);
       return Object.assign({}, subState, {
         ideas: [
           ...subState.ideas,
