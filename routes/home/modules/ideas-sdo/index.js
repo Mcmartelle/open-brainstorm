@@ -12,9 +12,8 @@ const sdo = {
       return Object.assign(
       {
         ideas: [],
-        $userId: Math.round(Math.random()*10**10),
-        $createRoomAttempted: false,
-        $joinRoomAttempted: false
+        createRoomAttempted: false,
+        joinRoomAttempted: false
       },
       payload
       );
@@ -22,13 +21,7 @@ const sdo = {
     createRoom(subState) {
       socket.emit('createRoom');
       return Object.assign({}, subState, {
-        $createRoomAttempted: true
-      });
-    },
-    roomCreated(subState, roomName) {
-      return Object.assign({}, subState, {
-        $roomCreated: true,
-        $roomName: roomName
+        createRoomAttempted: true
       });
     },
     joinRoom(subState, roomName) {
@@ -36,31 +29,40 @@ const sdo = {
       if (re.test(roomName)) {
         socket.emit('join room', roomName);
         return Object.assign({}, subState, {
-          $joinRoomAttempted: true
+          joinRoomAttempted: true
         });
       } else {
         console.log('Incorrect brainstorm ID format.');
         return subState;
       }
     },
-    roomJoined(subState, roomName) {
+    roomJoined(subState, roomData) {
+      if (!roomData.isCreator) {
+        socket.emit('brainstorm state request', roomData.creatorId);
+      }
       return Object.assign({}, subState, {
-        $roomJoined: true,
-        $roomName: roomName
+        roomJoined: true,
+        roomName: roomData.roomName,
+        creatorId: roomData.creatorId,
+        socketId: roomData.socketId
       });
+    },
+    sendBrainstormState(subState, requesterId) {
+      if (requesterId) {
+        socket.emit('brainstorm state send', requesterId, subState.ideas);
+      }
+      return subState;
     },
     insert(subState, description) {
       const newIdea =
       {
-        author: subState.$userId,
-        ideaId: subState.$userId + new Date().getTime(),
-        index: subState.ideas.length,
+        author: subState.socketId,
+        ideaId: subState.socketId + new Date().getTime(),
         description,
-        voteCount: 0,
-        upVoted: false,
-        downVoted: false
+        upVoters: [],
+        downVoters: []
       };
-      socket.emit('idea update', newIdea);
+      socket.emit('idea update', newIdea, true);
       return Object.assign({}, subState, {
         ideas: [
           ...subState.ideas,
@@ -68,45 +70,103 @@ const sdo = {
         ]
       });
     },
-    insertFromSocket(subState, newIdea) {
-      if (newIdea.author === subState.$userId) {
-        return subState;
+    insertFromSocket(subState, payload) {
+      if (payload.isNewIdea) {
+        return Object.assign({}, subState, {
+          ideas: [
+            ...subState.ideas,
+            payload.updatedIdea
+          ]
+        });
       }
-      return Object.assign({}, subState, {
-        ideas: [
-          ...subState.ideas,
-          newIdea
-        ]
+      const index = subState.ideas.findIndex((idea) => {
+        return idea.ideaId === payload.updatedIdea.ideaId;
       });
-    },
-    upVote(subState, index) {
-      if (index >= subState.ideas.length || index < 0 || subState.ideas[index].upVoted) {
+      if (index === -1) {
         return subState;
       }
-
       return Object.assign({}, subState, {
         ideas: [
           ...subState.ideas.slice(0, index),
-          {
-            ...subState.ideas[index],
-            voteCount: subState.ideas[index].voteCount + 1
-          },
+          payload.updatedIdea,
           ...subState.ideas.slice(index + 1)
         ]
       });
     },
-    downVote(subState, index) {
-      if (index >= subState.ideas.length || index < 0 || subState.ideas[index].downVoted) {
+    insertAllFromSocket(subState, newIdeas) {
+      return Object.assign({}, subState, {
+        ideas: newIdeas
+      });
+    },
+    upVote(subState, ideaId) {
+      const index = subState.ideas.findIndex((idea) => {
+        return idea.ideaId === ideaId;
+      });
+
+      if (index !== -1 && subState.ideas[index].upVoters.indexOf(subState.socketId) !== -1) {
         return subState;
       }
+      console.log('subState: ', subState);
+      console.log('subState.ideas[index]: ', subState.ideas[index]);
 
+      // got "Uncaught TypeError: Cannot add property 0, object is not extensible" if pushed within updatedIdea
+      const newUpVoters = [...subState.ideas[index].upVoters];
+      newUpVoters.push(subState.socketId);
+      const newDownVoters = subState.ideas[index].downVoters.reduce((accumulator, voter) => {
+        if (voter !== subState.socketId) {
+          accumulator.push(voter);
+        }
+        return accumulator;
+      }, []);
+
+      const updatedIdea = {
+        ...subState.ideas[index],
+        upVoters: newUpVoters,
+        downVoters: newDownVoters
+      };
+
+      socket.emit('idea update', updatedIdea);
       return Object.assign({}, subState, {
         ideas: [
           ...subState.ideas.slice(0, index),
-          {
-            ...subState.ideas[index],
-            voteCount: subState.ideas[index].voteCount - 1
-          },
+          updatedIdea,
+          ...subState.ideas.slice(index + 1)
+        ]
+      });
+    },
+    downVote(subState, ideaId) {
+      const index = subState.ideas.findIndex((idea) => {
+        return idea.ideaId === ideaId;
+      });
+
+      if (index !== -1 && subState.ideas[index].downVoters.indexOf(subState.socketId) !== -1) {
+        return subState;
+      }
+      console.log('subState: ', subState);
+      console.log('subState.ideas[index]: ', subState.ideas[index]);
+
+      // got "Uncaught TypeError: Cannot add property 0, object is not extensible" if pushed within updatedIdea
+      const newDownVoters = [...subState.ideas[index].downVoters];
+      newDownVoters.push(subState.socketId);
+      const newUpVoters = subState.ideas[index].upVoters.reduce((accumulator, voter) => {
+        if (voter !== subState.socketId) {
+          accumulator.push(voter);
+        }
+        return accumulator;
+      }, []);
+      console.log('newUpVoters: ', newUpVoters);
+
+      const updatedIdea = {
+        ...subState.ideas[index],
+        upVoters: newUpVoters,
+        downVoters: newDownVoters
+      };
+
+      socket.emit('idea update', updatedIdea);
+      return Object.assign({}, subState, {
+        ideas: [
+          ...subState.ideas.slice(0, index),
+          updatedIdea,
           ...subState.ideas.slice(index + 1)
         ]
       });
@@ -131,9 +191,16 @@ const sdo = {
         typeof nextState[sdoNamespaces.IDEAS].$sortedIdeas === 'undefined' || // first run?
         nextState[sdoNamespaces.IDEAS] !== state[sdoNamespaces.IDEAS]
       ) {
-        let $sortedIdeas = [...nextState[sdoNamespaces.IDEAS].ideas];
+        const enhancedIdeas = nextState[sdoNamespaces.IDEAS].ideas.map((idea) => {
+          return {
+            ...idea,
+            $upVotes: idea.upVoters.length,
+            $downVotes: idea.downVoters.length,
+            $voteCount: idea.upVoters.length - idea.downVoters.length
+          };
+        });
 
-        $sortedIdeas = $sortedIdeas.sort((ideaA, ideaB) => ideaB.voteCount - ideaA.voteCount);
+        const $sortedIdeas = enhancedIdeas.sort((ideaA, ideaB) => ideaB.$voteCount - ideaA.$voteCount);
 
         nextState = deepAssign(nextState, sdoNamespaces.IDEAS, {
           $sortedIdeas

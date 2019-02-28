@@ -15,7 +15,7 @@ class SocketSingleton {
     if (!instance) {
       instance = this;
       this.socket = io('http://localhost:3000');
-      this.addListeners();
+      this.addSocketListeners();
     }
 
     return instance;
@@ -25,43 +25,50 @@ class SocketSingleton {
    *
    *
    */
-  addListeners() {
+  addSocketListeners() {
     this.socket.on('idea update', this.insertFromSocket);
-    this.socket.on('disconnect', () => {
-      console.log('disconnected');
-    });
-    this.socket.on('error', (error) => {
-      console.log('error: ', error);
-    });
-    this.socket.on('roomCreated', this.roomCreated);
+    this.socket.on('disconnect', this.disconnected);
     this.socket.on('roomJoined', this.roomJoined);
+    this.socket.on('brainstorm state requested', this.sendBrainstormState);
+    this.socket.on('brainstorm state sent', this.updateBrainstormState);
+  }
+
+
+  /**
+   * @param {*} requesterId
+   */
+  sendBrainstormState(requesterId) {
+    console.log('requesterId: ', requesterId);
+    console.log('sendBrainstormState');
+    // this.socket.emit('brainstorm state send', requesterId, storeInstance.sdoNamespaces.IDEAS);
+    // this.socket is undefined in this function for some reason. running mutator just to access socket.emit :(
+    storeInstance.commit({
+      namespace: sdoNamespaces.IDEAS,
+      mutationId: 'sendBrainstormState',
+      payload: requesterId
+    });
   }
 
   /**
-   *
-   *
+   * @param {*} brainstormState
+   */
+  updateBrainstormState(brainstormState) {
+    console.log('updateBrainstormState');
+    storeInstance.commit({
+      namespace: sdoNamespaces.IDEAS,
+      mutationId: 'insertAllFromSocket',
+      payload: brainstormState
+    });
+  }
+
+  /**
    * @param {*} newIdea
    */
-  insertFromSocket(newIdea) {
+  insertFromSocket(updatedIdea, isNewIdea) {
     storeInstance.commit({
       namespace: sdoNamespaces.IDEAS,
       mutationId: 'insertFromSocket',
-      payload: newIdea
-    });
-  }
-
-  /**
-   *
-   *
-   * @param {*} roomData
-   */
-  roomCreated(roomData) {
-    console.log('roomName: ', roomData.roomName);
-    console.log('socketId: ', roomData.socketId);
-    storeInstance.commit({
-      namespace: sdoNamespaces.IDEAS,
-      mutationId: 'roomCreated',
-      payload: roomData.roomName
+      payload: {updatedIdea, isNewIdea}
     });
   }
 
@@ -72,12 +79,21 @@ class SocketSingleton {
    */
   roomJoined(roomData) {
     console.log('roomName: ', roomData.roomName);
-    console.log('socketId: ', roomData.socketId);
+    console.log('isCreator: ', roomData.isCreator);
+    console.log('creatorId: ', roomData.creatorId);
     storeInstance.commit({
       namespace: sdoNamespaces.IDEAS,
       mutationId: 'roomJoined',
-      payload: roomData.roomName
+      payload: roomData
     });
+  }
+
+  /**
+   *
+   *
+   */
+  disconnected() {
+    console.log('disconnected');
   }
 }
 

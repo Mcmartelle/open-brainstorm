@@ -17,13 +17,14 @@ export const template = (ctx, html) => {
   } else {
     return html`
       ${header}
+      <h2>Room ID: ${ctx.roomName}</h2>
       <ul>
         ${ctx.sortedIdeas.map(
   (idea) => html`
             <li>
-              <span>${idea.voteCount}</span>
-              <button @click="${(e) => ctx.upVote(e, idea.index)}">+</button>
-              <button @click="${(e) => ctx.downVote(e, idea.index)}">-</button>
+              <span>${idea.$voteCount}</span>
+              <button @click="${(e) => ctx.upVote(e, idea.ideaId)}">+</button>
+              <button @click="${(e) => ctx.downVote(e, idea.ideaId)}">-</button>
               <span>${idea.description}</span>
             </li>
           `

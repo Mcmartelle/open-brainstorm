@@ -41,11 +41,11 @@ class HomePage extends mapStatePropertiesMixin(AoflElement) {
   mapStateProperties() {
     const state = this.storeInstance.getState();
     this.sortedIdeas = state[sdoNamespaces.IDEAS].$sortedIdeas;
-    this.roomCreated = state[sdoNamespaces.IDEAS].$roomCreated;
-    this.roomJoined = state[sdoNamespaces.IDEAS].$roomJoined;
-    this.createRoomAttempted = state[sdoNamespaces.IDEAS].$createRoomAttempted;
-    this.joinRoomAttempted = state[sdoNamespaces.IDEAS].$joinRoomAttempted;
-    this.roomName = state[sdoNamespaces.IDEAS].$roomName;
+    this.roomCreated = state[sdoNamespaces.IDEAS].roomCreated;
+    this.roomJoined = state[sdoNamespaces.IDEAS].roomJoined;
+    this.createRoomAttempted = state[sdoNamespaces.IDEAS].createRoomAttempted;
+    this.joinRoomAttempted = state[sdoNamespaces.IDEAS].joinRoomAttempted;
+    this.roomName = state[sdoNamespaces.IDEAS].roomName;
   }
 
   /**
