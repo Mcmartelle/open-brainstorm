@@ -43,3 +43,32 @@ p {
 img {
   max-width: 60rem;
 }
+
+ul {
+  list-style-type: none;
+}
+
+home-page button {
+  border-radius: 0.3em;
+}
+
+button.upvoted {
+  background: greenyellow;
+}
+
+button.downvoted {
+  background: orangered;
+}
+
+.voteCount {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.upVotes {
+  color: green;
+}
+
+.downVotes {
+  color: darkred;
+}

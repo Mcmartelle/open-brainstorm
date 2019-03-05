@@ -2,6 +2,7 @@ import styles from './template.css';
 import template from './template';
 import AoflElement from '@aofl/web-components/aofl-element';
 import {sdoNamespaces} from '../../../../modules/constants-enumerate';
+import {mapStatePropertiesMixin} from '@aofl/map-state-properties-mixin';
 import {validationMixin, isRequired} from '@aofl/form-validate';
 import {storeInstance} from '@aofl/store';
 import '../ideas-sdo';
@@ -10,13 +11,14 @@ import '../ideas-sdo';
  * @summary JoinBrainstorm
  * @extends {AoflElement}
  */
-class JoinBrainstorm extends validationMixin(AoflElement) {
+class JoinBrainstorm extends mapStatePropertiesMixin(validationMixin(AoflElement)) {
   /**
    * Creates an instance of JoinBrainstorm.
    */
   constructor() {
     super();
 
+    this.storeInstance = storeInstance;
     this.roomName = '';
     this.validators = {
       roomName: {
@@ -44,10 +46,19 @@ class JoinBrainstorm extends validationMixin(AoflElement) {
 
   /**
    *
+   *
+   */
+  mapStateProperties() {
+    const state = this.storeInstance.getState();
+    this.roomName = state[sdoNamespaces.IDEAS].roomName;
+  }
+
+  /**
+   *
    * @param {*} e
    */
   onRoomNameUpdate(e) {
-    this.roomName = e.target.value;
+    this.roomName = e.target.value.toUpperCase();
     this.form.roomName.validate();
   }
 

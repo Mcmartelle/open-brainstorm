@@ -22,9 +22,16 @@ export const template = (ctx, html) => {
         ${ctx.sortedIdeas.map(
   (idea) => html`
             <li>
-              <span>${idea.$voteCount}</span>
-              <button @click="${(e) => ctx.upVote(e, idea.ideaId)}">+</button>
-              <button @click="${(e) => ctx.downVote(e, idea.ideaId)}">-</button>
+            <span>
+              <span class="voteCount">${idea.$voteCount}</span>
+              <span>  ( </span>
+              <span class="upVotes">${idea.$upVotes}</span>
+              <span> / </span>
+              <span class="downVotes">${idea.$downVotes}</span>
+              <span> )</span>
+            </span>
+              <button @click="${(e) => ctx.upVote(e, idea.ideaId)}" class="${idea.$upVoted ? 'upvoted' : ''}" >+</button>
+              <button @click="${(e) => ctx.downVote(e, idea.ideaId)}" class="${idea.$downVoted ? 'downvoted' : ''}">-</button>
               <span>${idea.description}</span>
             </li>
           `

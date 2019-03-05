@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie';
 import {sdoNamespaces} from '../../../../modules/constants-enumerate';
 import {storeInstance} from '@aofl/store';
 import {deepAssign} from '@aofl/object-utils';
@@ -13,7 +14,8 @@ const sdo = {
       {
         ideas: [],
         createRoomAttempted: false,
-        joinRoomAttempted: false
+        joinRoomAttempted: false,
+        roomName: Cookies.get('roomId') || ''
       },
       payload
       );
@@ -40,11 +42,18 @@ const sdo = {
       if (!roomData.isCreator) {
         socket.emit('brainstorm state request', roomData.creatorId);
       }
+      console.log(Cookies.get('userId'));
+      let socketId = Cookies.get('userId');
+      if (!socketId) {
+        socketId = roomData.socketId;
+        Cookies.set('userId', socketId, {expires: 7});
+      }
+      Cookies.set('roomId', roomData.roomName, {expires: 1});
       return Object.assign({}, subState, {
         roomJoined: true,
         roomName: roomData.roomName,
         creatorId: roomData.creatorId,
-        socketId: roomData.socketId
+        socketId: socketId
       });
     },
     sendBrainstormState(subState, requesterId) {
@@ -103,21 +112,32 @@ const sdo = {
         return idea.ideaId === ideaId;
       });
 
-      if (index !== -1 && subState.ideas[index].upVoters.indexOf(subState.socketId) !== -1) {
+      if (index === -1) {
         return subState;
       }
-      console.log('subState: ', subState);
-      console.log('subState.ideas[index]: ', subState.ideas[index]);
 
-      // got "Uncaught TypeError: Cannot add property 0, object is not extensible" if pushed within updatedIdea
-      const newUpVoters = [...subState.ideas[index].upVoters];
-      newUpVoters.push(subState.socketId);
-      const newDownVoters = subState.ideas[index].downVoters.reduce((accumulator, voter) => {
-        if (voter !== subState.socketId) {
-          accumulator.push(voter);
-        }
-        return accumulator;
-      }, []);
+      let newUpVoters;
+      let newDownVoters;
+
+      if (subState.ideas[index].upVoters.indexOf(subState.socketId) !== -1) {
+        newUpVoters = subState.ideas[index].upVoters.reduce((accumulator, voter) => {
+          if (voter !== subState.socketId) {
+            accumulator.push(voter);
+          }
+          return accumulator;
+        }, []);
+        newDownVoters = [...subState.ideas[index].downVoters];
+      } else {
+        // got "Uncaught TypeError: Cannot add property 0, object is not extensible" if pushed within updatedIdea
+        newUpVoters = [...subState.ideas[index].upVoters];
+        newUpVoters.push(subState.socketId);
+        newDownVoters = subState.ideas[index].downVoters.reduce((accumulator, voter) => {
+          if (voter !== subState.socketId) {
+            accumulator.push(voter);
+          }
+          return accumulator;
+        }, []);
+      }
 
       const updatedIdea = {
         ...subState.ideas[index],
@@ -139,22 +159,32 @@ const sdo = {
         return idea.ideaId === ideaId;
       });
 
-      if (index !== -1 && subState.ideas[index].downVoters.indexOf(subState.socketId) !== -1) {
+      if (index === -1) {
         return subState;
       }
-      console.log('subState: ', subState);
-      console.log('subState.ideas[index]: ', subState.ideas[index]);
 
-      // got "Uncaught TypeError: Cannot add property 0, object is not extensible" if pushed within updatedIdea
-      const newDownVoters = [...subState.ideas[index].downVoters];
-      newDownVoters.push(subState.socketId);
-      const newUpVoters = subState.ideas[index].upVoters.reduce((accumulator, voter) => {
-        if (voter !== subState.socketId) {
-          accumulator.push(voter);
-        }
-        return accumulator;
-      }, []);
-      console.log('newUpVoters: ', newUpVoters);
+      let newDownVoters;
+      let newUpVoters;
+
+      if (subState.ideas[index].downVoters.indexOf(subState.socketId) !== -1) {
+        newDownVoters = subState.ideas[index].downVoters.reduce((accumulator, voter) => {
+          if (voter !== subState.socketId) {
+            accumulator.push(voter);
+          }
+          return accumulator;
+        }, []);
+        newUpVoters = [...subState.ideas[index].upVoters];
+      } else {
+        // got "Uncaught TypeError: Cannot add property 0, object is not extensible" if pushed within updatedIdea
+        newDownVoters = [...subState.ideas[index].downVoters];
+        newDownVoters.push(subState.socketId);
+        newUpVoters = subState.ideas[index].upVoters.reduce((accumulator, voter) => {
+          if (voter !== subState.socketId) {
+            accumulator.push(voter);
+          }
+          return accumulator;
+        }, []);
+      }
 
       const updatedIdea = {
         ...subState.ideas[index],
@@ -196,7 +226,9 @@ const sdo = {
             ...idea,
             $upVotes: idea.upVoters.length,
             $downVotes: idea.downVoters.length,
-            $voteCount: idea.upVoters.length - idea.downVoters.length
+            $voteCount: idea.upVoters.length - idea.downVoters.length,
+            $upVoted: idea.upVoters.indexOf(nextState[sdoNamespaces.IDEAS].socketId) !== -1,
+            $downVoted: idea.downVoters.indexOf(nextState[sdoNamespaces.IDEAS].socketId) !== -1
           };
         });
 
