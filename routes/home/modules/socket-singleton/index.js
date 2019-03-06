@@ -62,7 +62,10 @@ class SocketSingleton {
   }
 
   /**
-   * @param {*} newIdea
+   *
+   *
+   * @param {*} updatedIdea
+   * @param {boolean} isNewIdea
    */
   insertFromSocket(updatedIdea, isNewIdea) {
     storeInstance.commit({

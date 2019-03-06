@@ -1,6 +1,8 @@
 html {
   box-sizing: border-box;
   font-size: 62.5%;
+  height: 100%;
+  width: 100%;
 }
 
 body {
@@ -10,6 +12,7 @@ body {
   font-weight: 300;
   letter-spacing: 0.01em;
   line-height: 1.6;
+  background: lightgrey;
 }
 
 route-view {
