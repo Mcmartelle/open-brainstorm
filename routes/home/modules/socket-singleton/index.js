@@ -14,7 +14,7 @@ class SocketSingleton {
   constructor() {
     if (!instance) {
       instance = this;
-      this.socket = io('http://localhost:3000');
+      this.socket = io('https://mindmonsoon.com', {path: '/api/socket.io'});
       this.addSocketListeners();
     }
 

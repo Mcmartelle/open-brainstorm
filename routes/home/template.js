@@ -5,8 +5,7 @@ import './modules/open-brainstorm-icon';
 
 export const template = (ctx, html) => {
   const header = html`
-    <open-brainstorm-icon></open-brainstorm-icon>
-    <h1>Open Brainstorm</h1>
+    <h1>Mind Monsoon</h1>
   `;
   if (!ctx.createRoomAttempted && !ctx.joinRoomAttempted) {
     return html`
