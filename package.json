@@ -1,6 +1,6 @@
 {
-  "name": "aofl-starter",
-  "version": "1.0.0-alpha.1",
+  "name": "open-brainstorm",
+  "version": "0.0.2-alpha.1",
   "description": "",
   "main": "index.js",
   "private": true,
