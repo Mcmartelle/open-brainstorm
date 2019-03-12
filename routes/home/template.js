@@ -1,11 +1,12 @@
 import './modules/add-idea-form';
 import './modules/create-brainstorm';
 import './modules/join-brainstorm';
-import './modules/open-brainstorm-icon';
+import './modules/thumbs-down';
+import './modules/thumbs-up';
 
 export const template = (ctx, html) => {
   const header = html`
-    <h1>Mind Monsoon</h1>
+    <h1>MIND MONSOON</h1>
   `;
   if (!ctx.createRoomAttempted && !ctx.joinRoomAttempted) {
     return html`
@@ -22,15 +23,13 @@ export const template = (ctx, html) => {
   (idea) => html`
             <li>
             <span>
-              <span class="voteCount">${idea.$voteCount}</span>
-              <span>  ( </span>
               <span class="upVotes">${idea.$upVotes}</span>
-              <span> / </span>
+              <thumbs-up @click="${(e) => ctx.upVote(e, idea.ideaId)}" class="${idea.$upVoted ? 'upvoted' : ''}" ></thumbs-up>
+              <span class="voteCount">${idea.$voteCount}</span>
+              <thumbs-down @click="${(e) => ctx.downVote(e, idea.ideaId)}" class="${idea.$downVoted ? 'downvoted' : ''}"></thumbs-down>
               <span class="downVotes">${idea.$downVotes}</span>
-              <span> )</span>
             </span>
-              <button @click="${(e) => ctx.upVote(e, idea.ideaId)}" class="${idea.$upVoted ? 'upvoted' : ''}" >+</button>
-              <button @click="${(e) => ctx.downVote(e, idea.ideaId)}" class="${idea.$downVoted ? 'downvoted' : ''}">-</button>
+
               <span>${idea.description}</span>
             </li>
           `

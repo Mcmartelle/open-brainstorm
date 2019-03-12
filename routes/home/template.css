@@ -20,6 +20,8 @@ h1 {
   margin: 0 0 2rem 0;
   text-align: center;
   width: 50%;
+  color: #E9DF00;
+  letter-spacing: 0.2em;
 }
 
 h2 {
@@ -46,6 +48,17 @@ img {
 
 ul {
   list-style-type: none;
+}
+
+li {
+  border-radius: 0.3em;
+  background-color: white;
+  padding: 0.1em;
+  margin: 0.2em;
+  border-top: solid 0.05em lightgray;
+  border-left: solid 0.05em lightgray;
+  border-bottom: solid 0.05em darkgray;
+  border-right: solid 0.05em darkgray;
 }
 
 home-page button {
