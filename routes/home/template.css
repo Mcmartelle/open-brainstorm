@@ -65,12 +65,52 @@ home-page button {
   border-radius: 0.3em;
 }
 
-button.upvoted {
-  background: greenyellow;
+.thumb-button {
+  border: none;
 }
 
-button.downvoted {
-  background: orangered;
+.thumbs-up {
+  padding-top: 0.1em
+}
+
+.thumbs-down {
+  padding-top: 0.2em
+}
+
+.thumbs-up svg {
+  display: inline-block;
+  height: 1.3em;
+  width: 1.3em;
+  cursor:pointer;
+}
+
+.up-voted svg path {
+  fill: limegreen;
+}
+
+.thumbs-up svg:hover path {
+  fill: darkgreen;
+  transform: scale(1.05);
+}
+
+.thumbs-down svg {
+  display: inline-block;
+  height: 1.3em;
+  width: 1.3em;
+  cursor:pointer;
+}
+
+.thumbs-down svg {
+  transform: rotate(180deg);
+}
+
+.down-voted svg path {
+  fill: orangered;
+}
+
+.thumbs-down svg:hover path {
+  fill: darkred;
+  transform: scale(1.05);
 }
 
 .voteCount {

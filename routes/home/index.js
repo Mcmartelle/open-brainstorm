@@ -1,6 +1,6 @@
 /**
  * @route /
- * @title Open-Brainstorm
+ * @title Mind Monsoon
  * @prerender false
  */
 import {template} from './template';
