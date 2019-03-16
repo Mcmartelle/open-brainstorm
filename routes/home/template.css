@@ -1,6 +1,6 @@
 :host {
   display: flex;
-  padding: 4.5rem;
+  padding-bottom: 12rem;
   flex-direction: column;
   align-items: center;
 }
@@ -9,37 +9,40 @@
   margin-bottom: 2rem;
 }
 
-#badges-container {
+.header {
+  width: 100%;
+  margin: 0 0 2rem 0;
   display: flex;
-  justify-content: center;
-  margin-bottom: 2.5rem;
+  flex-direction: column;
+  align-items: center;
+  background: #524A54;
 }
 
 h1 {
-  border-bottom: 0.01rem solid #dadada;
-  margin: 0 0 2rem 0;
+  margin: 0;
   text-align: center;
-  width: 50%;
-  color: #E9DF00;
-  letter-spacing: 0.2em;
+  color: #F2EFEA;
+  letter-spacing: 1rem;
+  margin-left: 1rem;
+  word-spacing: 1rem;
+  line-height: 4rem;
+  font-family: serif;
 }
 
 h2 {
+  font-family: sans-serif;
   font-size: 2rem;
   margin-top: 0;
 }
 
-p {
-  margin: 0 0 1.5rem 0;
+.roomId {
+  font-family: monospace;
+  font-size: 3rem;
+  font-weight: 400;
 }
 
-#learn-aofl {
-  font-size: 3rem;
-  text-decoration: none;
-  color: #3ba6f7;
-  border-bottom: 0.2rem solid;
-  line-height: 1.3;
-  margin-bottom: 2rem;
+p {
+  margin: 0 0 1.5rem 0;
 }
 
 img {
@@ -48,55 +51,73 @@ img {
 
 ul {
   list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 
-li {
-  border-radius: 0.3em;
+li.idea {
+  border-radius: 0.5rem;
   background-color: white;
-  padding: 0.2em 0.4em;
-  margin: 0.2em;
-  border-top: solid 0.05em lightgray;
-  border-left: solid 0.05em lightgray;
-  border-bottom: solid 0.05em darkgray;
-  border-right: solid 0.05em darkgray;
+  padding: 0.25rem 1.5rem;
+  margin: 0.5rem 1rem;
 }
 
-home-page button {
-  border-radius: 0.3em;
+li.add-idea {
+  text-align: center;
 }
+
+.voteContainer {
+  background: #524A54;
+  margin-left: -1.25rem;
+  border-radius: 0.3rem;
+  display: inline-flex;
+  justify-content: space-evenly;
+  align-items: center;
+  min-width: 10rem;
+  max-width: 13rem;
+}
+
+/* home-page button {
+  border-radius: 0.5rem;
+} */
 
 .thumb-button {
+  display: inline-block;
   border: none;
+  background: inherit;
 }
 
 .thumbs-up {
-  padding-top: 0.1em
+  padding-top: 0.3rem
 }
 
 .thumbs-down {
-  padding-top: 0.2em
+  padding-top: 0.3rem
+}
+
+svg path {
+  fill: #BBBABC;
 }
 
 .thumbs-up svg {
   display: inline-block;
-  height: 1.3em;
-  width: 1.3em;
+  height: 2rem;
+  width: 2rem;
   cursor:pointer;
 }
 
 .up-voted svg path {
-  fill: limegreen;
+  fill: #6CC6C6;
 }
 
 .thumbs-up svg:hover path {
-  fill: darkgreen;
   transform: scale(1.05);
 }
 
 .thumbs-down svg {
   display: inline-block;
-  height: 1.3em;
-  width: 1.3em;
+  height: 2rem;
+  width: 2rem;
   cursor:pointer;
 }
 
@@ -105,23 +126,28 @@ home-page button {
 }
 
 .down-voted svg path {
-  fill: orangered;
+  fill: #C73649;
 }
 
 .thumbs-down svg:hover path {
-  fill: darkred;
   transform: scale(1.05);
 }
 
 .voteCount {
   font-weight: bold;
-  font-size: 1.1em;
+  font-size: 2rem;
+  color: white;
 }
 
 .upVotes {
-  color: green;
+  color: #6CC6C6;
 }
 
 .downVotes {
-  color: darkred;
+  color: #C73649;
+}
+
+.idea-description {
+  line-height: 3rem;
+  font-size: 1.8rem;
 }
