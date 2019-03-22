@@ -58,7 +58,8 @@ class JoinBrainstorm extends mapStatePropertiesMixin(validationMixin(AoflElement
    * @param {*} e
    */
   onRoomNameUpdate(e) {
-    this.roomName = e.target.value.toUpperCase();
+    this.roomName = `${e.target.value}`.replace(/\D/g, '');
+    e.target.value = this.roomName;
     this.form.roomName.validate();
   }
 

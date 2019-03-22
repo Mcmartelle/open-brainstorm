@@ -15,7 +15,7 @@ const sdo = {
         ideas: [],
         createRoomAttempted: false,
         joinRoomAttempted: false,
-        roomName: Cookies.get('roomId') || ''
+        roomName: ''
       },
       payload
       );
@@ -27,7 +27,7 @@ const sdo = {
       });
     },
     joinRoom(subState, roomName) {
-      const re = /^[A-Z]{5}/;
+      const re = /^[0-9]{6}/;
       if (re.test(roomName)) {
         socket.emit('join room', roomName);
         return Object.assign({}, subState, {
@@ -38,9 +38,21 @@ const sdo = {
         return subState;
       }
     },
+    creatorJoinRoom(subState, roomName) {
+      const re = /^[0-9]{6}/;
+      if (re.test(roomName)) {
+        socket.emit('creator rejoin', roomName);
+        return Object.assign({}, subState, {
+          joinRoomAttempted: true
+        });
+      } else {
+        console.log('Incorrect brainstorm ID format.');
+        return subState;
+      }
+    },
     roomJoined(subState, roomData) {
       if (!roomData.isCreator) {
-        socket.emit('brainstorm state request', roomData.creatorId);
+        socket.emit('brainstorm state request', roomData.roomName);
       }
       console.log(Cookies.get('userId'));
       let socketId = Cookies.get('userId');

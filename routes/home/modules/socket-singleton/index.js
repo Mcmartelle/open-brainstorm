@@ -1,4 +1,6 @@
 import io from 'socket.io-client';
+import Cookies from 'js-cookie';
+import queryString from 'query-string';
 import {storeInstance} from '@aofl/store';
 import {sdoNamespaces} from '../../../../modules/constants-enumerate';
 import '../ideas-sdo';
@@ -27,12 +29,47 @@ class SocketSingleton {
    */
   addSocketListeners() {
     this.socket.on('idea update', this.insertFromSocket);
-    this.socket.on('disconnect', this.disconnected);
+    this.socket.on('disconnect', () => console.log('disconnected'));
+    this.socket.on('reconnect', () => console.log('reconnecting'));
+    this.socket.on('connect', this.connect);
     this.socket.on('roomJoined', this.roomJoined);
     this.socket.on('brainstorm state requested', this.sendBrainstormState);
     this.socket.on('brainstorm state sent', this.updateBrainstormState);
   }
 
+  /**
+   *
+   *
+   */
+  connect() {
+    console.log('Connection reestablished.');
+
+    let roomName = null;
+    const searchObject = queryString.parse(window.location.search);
+    if (searchObject.room) {
+      roomName = searchObject.room;
+    } else if (Cookies.get('roomId')) {
+      roomName = Cookies.get('roomId');
+    }
+
+    if (roomName) {
+      if (roomName === Cookies.get('creatorOf')) {
+        console.log(`Joining room number ${roomName} as creator after reestablishing connection to socket.io`);
+        storeInstance.commit({
+          namespace: sdoNamespaces.IDEAS,
+          mutationId: 'creatorJoinRoom',
+          payload: roomName
+        });
+      } else {
+        console.log(`Joining room number ${roomName} after reestablishing connection to socket.io`);
+        storeInstance.commit({
+          namespace: sdoNamespaces.IDEAS,
+          mutationId: 'joinRoom',
+          payload: roomName
+        });
+      }
+    }
+  }
 
   /**
    * @param {*} requesterId
@@ -84,19 +121,16 @@ class SocketSingleton {
     console.log('roomName: ', roomData.roomName);
     console.log('isCreator: ', roomData.isCreator);
     console.log('creatorId: ', roomData.creatorId);
+
+    if (roomData.isCreator) {
+      Cookies.set('creatorOf', roomData.roomName);
+    }
+
     storeInstance.commit({
       namespace: sdoNamespaces.IDEAS,
       mutationId: 'roomJoined',
       payload: roomData
     });
-  }
-
-  /**
-   *
-   *
-   */
-  disconnected() {
-    console.log('disconnected');
   }
 }
 
