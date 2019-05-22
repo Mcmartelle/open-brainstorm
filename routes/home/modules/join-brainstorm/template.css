@@ -9,4 +9,6 @@ input {
 
 p {
   text-align: center;
+  color: darkred;
+  margin: 0;
 }

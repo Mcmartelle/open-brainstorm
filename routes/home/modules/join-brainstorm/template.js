@@ -4,7 +4,7 @@ export default (context, html) => html`
     <button type="submit" ?disabled="${!context.form.valid}">Join Brainstorm</button> ${context.form.roomName.isRequired.valid
       ? ''
       : html`
-          <p>Brainstorm 6 digit room number is required</p>
+          <p>6 digit room number is required</p>
         `}
   </form>
 `;
