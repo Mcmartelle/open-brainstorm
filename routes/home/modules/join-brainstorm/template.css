@@ -1,5 +1,12 @@
 :host {
   display: inline-block;
   border-top: grey solid 0.2rem;
-  padding-left: 1rem;
+}
+
+input {
+  margin-left: 1rem;
+}
+
+p {
+  text-align: center;
 }
