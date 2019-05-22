@@ -1,9 +1,10 @@
 import './modules/add-idea-form';
 import './modules/create-brainstorm';
 import './modules/join-brainstorm';
+import '../../modules/cloud-logo';
 
 export const template = (ctx, html) => {
-  const header = html`<div class="header"><h1>MIND MONSOON</h1></div>`;
+  const header = html`<div class="header"><h1>MIND<cloud-logo></cloud-logo>MONSOON</h1></div>`;
   if (!ctx.createRoomAttempted && !ctx.joinRoomAttempted) {
     return html`
       ${header}
