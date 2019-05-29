@@ -139,16 +139,16 @@ module.exports = (mode) => {
         level: mode === 'development'? 'none': 'auto'
       }),
       new WebpackPwaManifest({
-        'name': 'Aofl Starter App',
-        'short_name': 'AoflStarter',
-        'description': 'Aofl Starter App',
+        'name': 'Mind Monsoon',
+        'short_name': 'MindMonsoon',
+        'description': 'Mind Monsoon',
         'display': 'standalone',
-        'theme-color': '#fdf667',
-        'background_color': '#fdf667',
+        'theme-color': '#bbbabc',
+        'background_color': '#bbbabc',
         'crossorigin': 'use-credentials', // can be null, use-credentials or anonymous
         'ios': {
-          'apple-mobile-web-app-title': 'Aofl Starter App',
-          'apple-mobile-web-app-status-bar-style': '#fdf667'
+          'apple-mobile-web-app-title': 'Mind Monsoon',
+          'apple-mobile-web-app-status-bar-style': '#bbbabc'
         },
         'icons': [
           {
