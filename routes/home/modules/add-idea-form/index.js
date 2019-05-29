@@ -73,6 +73,7 @@ class AddIdeaForm extends validationMixin(AoflElement) {
       });
 
       this.description = '';
+      form.getElementsByTagName('input')[0].focus();
     }
   }
 

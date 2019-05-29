@@ -4,7 +4,7 @@ export default (context, html) => html`
     <button type="submit" ?disabled="${!context.form.valid}">Add</button> ${context.form.description.isRequired.valid
       ? ''
       : html`
-          <p>Description is required</p>
+          <p>Cannot add empty idea</p>
         `}
   </form>
 `;

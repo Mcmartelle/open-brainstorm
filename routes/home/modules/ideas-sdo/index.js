@@ -6,17 +6,24 @@ import SocketSingleton from '../socket-singleton';
 
 const socket = new SocketSingleton().socket;
 
+const getNewStateObject = () => {
+  return {
+    createRoomAttempted: false,
+    creatorId: '',
+    ideas: [],
+    joinRoomAttempted: false,
+    roomJoined: false,
+    roomName: '',
+    socketId: ''
+  };
+};
+
 const sdo = {
   namespace: sdoNamespaces.IDEAS,
   mutations: {
     init(payload = {}) {
       return Object.assign(
-      {
-        ideas: [],
-        createRoomAttempted: false,
-        joinRoomAttempted: false,
-        roomName: ''
-      },
+      getNewStateObject(),
       payload
       );
     },
@@ -26,6 +33,13 @@ const sdo = {
         createRoomAttempted: true
       });
     },
+    leaveRoom(subState) {
+      socket.emit('leaveRoom');
+      Cookies.remove('roomId');
+      Cookies.remove('creatorOf');
+      console.log(subState);
+      return Object.assign({}, subState, getNewStateObject());
+    },
     joinRoom(subState, roomName) {
       const re = /^[0-9]{6}/;
       if (re.test(roomName)) {
@@ -34,7 +48,6 @@ const sdo = {
           joinRoomAttempted: true
         });
       } else {
-        console.log('Incorrect brainstorm ID format.');
         return subState;
       }
     },

@@ -11,4 +11,11 @@ form {
 
 input {
   width: 66%;
+  margin-left: 1rem;
+}
+
+p {
+  text-align: center;
+  color: darkred;
+  margin: 0;
 }

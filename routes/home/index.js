@@ -58,6 +58,20 @@ class HomePage extends mapStatePropertiesMixin(AoflElement) {
 
   /**
    *
+   * @param {*} e
+   */
+  leaveRoom(e) {
+    e.preventDefault();
+
+    this.storeInstance.commit({
+      namespace: sdoNamespaces.IDEAS,
+      mutationId: 'leaveRoom',
+      payload: ''
+    });
+  }
+
+  /**
+   *
    *
    * @param {*} e
    * @param {*} index

@@ -14,7 +14,7 @@ export const template = (ctx, html) => {
   } else {
     return html`
       ${header}
-      <h2>ROOM NUMBER: <span class='roomId'>${ctx.roomName}</span></h2>
+      <h2 class="room-info"><span>ROOM NUMBER:</span><span class='room-id'>${ctx.roomName}</span><button class="leave-room" @click="${(e) => ctx.leaveRoom(e)}">Leave Room</button></h2>
       <ul>
         ${ctx.sortedIdeas.map(
   (idea) => html`
